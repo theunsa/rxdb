@@ -9,6 +9,17 @@ export type CouchDBCheckpointType = {
     sequence: number;
 };
 
+export enum CouchDBFilterType {
+    ClassicFilter = 1,
+    ViewFilter
+} 
+export type CouchDBFilterOptions = {
+    filterType: CouchDBFilterType;
+    designDoc: string;
+    viewName: string;
+    queryParams?: Map<string, any>;
+}
+
 export type FetchMethodType = typeof fetch;
 export type SyncOptionsCouchDBNew<RxDocType> = Omit<
 ReplicationOptions<RxDocType, any>,
@@ -26,6 +37,8 @@ ReplicationOptions<RxDocType, any>,
          * for the long polling of the changestream.
          */
         heartbeat?: number;
+
+        filter?: CouchDBFilterOptions;
     };
     push?: Omit<ReplicationPushOptions<RxDocType>, 'handler'>;
 };

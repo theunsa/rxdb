@@ -38,7 +38,8 @@ import type {
 import {
     couchDBDocToRxDocData,
     COUCHDB_NEW_REPLICATION_PLUGIN_IDENTITY_PREFIX,
-    mergeUrlQueryParams
+    mergeUrlQueryParams,
+    couchDBFilterOptionsToQueryString
 } from './couchdb-helper';
 import { pouchSwapPrimaryToId } from '../pouchdb';
 
@@ -99,7 +100,9 @@ export function syncCouchDBNew<RxDocType>(
                     since: lastPulledCheckpoint ? lastPulledCheckpoint.sequence : 0,
                     heartbeat: options.pull && options.pull.heartbeat ? options.pull.heartbeat : 60000,
                     limit: batchSize,
-                    seq_interval: batchSize
+                    seq_interval: batchSize,
+                    filter: options.pull && options.pull.filter ?
+                        couchDBFilterOptionsToQueryString(options.pull.filter) : undefined
                 });
 
                 const response = await replicationState.fetch(url);
@@ -209,7 +212,9 @@ export function syncCouchDBNew<RxDocType>(
                         include_docs: true,
                         heartbeat: options.pull && options.pull.heartbeat ? options.pull.heartbeat : 60000,
                         limit: batchSize,
-                        seq_interval: batchSize
+                        seq_interval: batchSize,
+                        filter: options.pull && options.pull.filter ?
+                            couchDBFilterOptionsToQueryString(options.pull.filter) : undefined
                     });
 
                     let jsonResponse: PouchdbChangesResult;
